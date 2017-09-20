@@ -57,19 +57,25 @@ int main(int argc, char** argv) {
 
     int conexaoGrep = -1;
     
+    int parent_pid = getpid();
+
+    if ((filhoAceitaRecebe = fork()) < 0) {
+        perror("Ocorreu um erro criando nova instância no servidor - fork");
+    }
+
     while (true) {
-        Mensagem* m = new Mensagem();
-
-        if ((filhoAceitaRecebe = fork()) < 0) {
-            perror("Ocorreu um erro criando nova instância no servidor - fork");
-        } else {
-
-            // Aceita nova conexão
-            if (filhoAceitaRecebe != 0) {
-                if(conexaoGrep >= 0)
-                    return 0;
+            printf("\nPARENT: %d\n", parent_pid);
+            printf("\npid: %d\n", getpid());
+            Mensagem* m = new Mensagem();
+            if (getpid() == parent_pid){
+                // Aceita nova conexão
+                // if (filhoAceitaRecebe != 0) {
+                // if(conexaoGrep >= 0){
+                //     printf("\nBBBBBBB\n");
+                //     return 0;
+                // }
                 
-                printf("\nAceitar...");
+                printf("\nAceitar.");
                 fflush(stdout);
                 conexaoGrep = cliente->aceitarGrep();
                 printf("Ok - Cliente %d\n", conexaoGrep);
@@ -78,7 +84,7 @@ int main(int argc, char** argv) {
                 //--------------------------------------------
                 //Receber mensagem de solicitação de grep distribuído - 0
 
-                printf("\nReceber...");
+                printf("\nReceber.pid=%d ",getpid());
                 fflush(stdout);
                 m = cliente->receberDoGrep();
                 printf("Ok\n");
@@ -91,71 +97,108 @@ int main(int argc, char** argv) {
 
                 //--------------------------------------------
                 //Enviar mensagem ao servidor solicitando grep distribuído - 1
-                printf("\nEnviar...");
+                printf("\nEnviar.");
                 fflush(stdout);
                 m->setCodigo(1);
+                m->toChar(msg); ///
+                printf("Mensagem: %s", msg);
                 cliente->enviarAoServidor(m);
                 printf("Ok\n");
                 fflush(stdout);
+
+                //TEM Q PARAR AQUI ATE O OUTRO PROCESSO RECEBER E ENVIAR
+                sleep(15);
+
+                //--------------------------------------------
+                //Receber mensagem do servidor com resposta de grep distribuído - 4 [Resposta de 1]
+                printf("\nReceber.ansdasbdhiasbdiabdhba");
+                fflush(stdout);
+                m = cliente->receberDoServidor();
+                m->toChar(msg);
+                printf("Mensagem: %s", msg);
+                printf("Okkkkk\n");
+                fflush(stdout);
+
+                //--------------------------------------------
+                //Enviar mensagem à aplicação com resposta de grep distribuído - 5 [Resposta de 0]
+                printf("\nEnviar.");
+                fflush(stdout);
+                m->setCodigo(5);
+                m->toChar(msg); ///
+                printf("Mensagem: %s", msg);
+                cliente->enviarAoGrep(m);
+                printf("Ok\n");
+                fflush(stdout);
             }
-            // Recebe nova mensagem
+                // Recebe nova mensagem
             else {
-                
-                if(conexaoGrep < 0)
-                    return 0;
+                char msg[255];
+                    
+                // if(conexaoGrep < 0)
+                //     return 0;
                 
                 //--------------------------------------------
                 //Receber mensagem do servidor solicitando grep local - 2
-                printf("\nReceber...");
+                printf("\nReceber...pid=%d ",getpid());
                 fflush(stdout);
                 m = cliente->receberDoServidor();
-                printf("Ok\n");
+                m->toChar(msg); ///
+                printf("Mensagem: %s", msg);
+                printf("Ok hahahahaah\n");
                 fflush(stdout);
 
                 //--------------------------------------------
                 //Executar grep local
-                string comando = m->getTexto() + " " + NOME_ARQUIVO + " > log.temp";
-                system(comando.data());
+                // printf("1\n");
+                // string comando = m->getTexto() + " " + NOME_ARQUIVO + " > log.temp";
+                // printf("2\n");
+                // system(comando.data());
+                // printf("3\n");
                 std::ifstream arq("log.temp");
-                string buffer;
-                string result;
-                while (getline(arq, buffer)) {
-                    result += buffer;
-                }
+                // printf("4\n");
+                // string buffer;
+                // printf("5\n");
+                // string result;
+                // printf("6\n");
+                // while (getline(arq, buffer)) {
+                //     result += buffer;
+                // }
+                string result = "blalala";
 
                 //--------------------------------------------
                 //Enviar mensagem de resposta da solicitação de grep local - 3 [Resposta de 2]
                 printf("\nEnviar...");
                 fflush(stdout);
-
                 m = new Mensagem(3, result.data());
                 cliente->enviarAoServidor(m);
                 printf("Ok\n");
+                m->toChar(msg); ///
+                printf("Mensagem: %s", msg);
                 fflush(stdout);
 
-                //--------------------------------------------
-                //Receber mensagem do servidor com resposta de grep distribuído - 4 [Resposta de 1]
-                printf("\nReceber...");
-                fflush(stdout);
-                m = cliente->receberDoServidor();
-                printf("Ok\n");
-                fflush(stdout);
+                // //--------------------------------------------
+                // //Receber mensagem do servidor com resposta de grep distribuído - 4 [Resposta de 1]
+                // printf("\nReceber...");
+                // fflush(stdout);
+                // m = cliente->receberDoServidor();
+                // printf("Ok\n");
+                // fflush(stdout);
 
-                //--------------------------------------------
-                //Enviar mensagem à aplicação com resposta de grep distribuído - 5 [Resposta de 0]
-                printf("\nEnviar...");
-                fflush(stdout);
-                m->setCodigo(5);
-                cliente->enviarAoGrep(m);
-                printf("Ok\n");
-                fflush(stdout);
+                // //--------------------------------------------
+                // //Enviar mensagem à aplicação com resposta de grep distribuído - 5 [Resposta de 0]
+                // printf("\nEnviar...");
+                // fflush(stdout);
+                // m->setCodigo(5);
+                // cliente->enviarAoGrep(m);
+                // printf("Ok\n");
+                // fflush(stdout);
 
-                cliente->encerrarGrep();
+                // cliente->encerrarGrep();
 
             }
-
-        }
+        
     }
+    
 
 
     //cliente->encerrarServidor();

@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
         
         string str_argumentos = argumentos;
                 
-        Cliente* cliente = new Cliente(8001);
+        Cliente* cliente = new Cliente(8003);
         printf("\nConectar...");       
         cliente->conectar();
         printf("Ok\n");       
