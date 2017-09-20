@@ -1,1 +1,1 @@
-g++ grep/Cliente.cpp grep/Mensagem.cpp grep/main.cpp -o grep/cliente_grep
+g++ Cliente.cpp Mensagem.cpp main.cpp -o cliente_grep

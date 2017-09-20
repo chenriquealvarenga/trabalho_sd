@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
         //return 1;
     }
 
-    int porta = 8000; //atoi(argv[1]);
+    int porta = atoi(argv[1]);
 
     Servidor* servidor = new Servidor(porta);
 
@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
 
                 indice_cliente = servidor->aceitarCliente();
 
-                //printf("Pressione qualquer tecla para continuar...");
-                //getchar();
+                printf("Pressione qualquer tecla para continuar...");
+                getchar();
 
                 if (indice_cliente >= 0) {
 

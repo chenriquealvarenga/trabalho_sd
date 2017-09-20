@@ -28,17 +28,17 @@ using namespace std;
  */
 int main(int argc, char** argv) {
 
-    /*if(argc < 3){
+    if(argc < 3){
         printf("Parâmetros insuficientes: entre com o ip e a porta.\n");
-        //printf("%s <IP_SERVIDOR> <PORTA_SERVIDOR>", argv[0]);
+        printf("%s <IP_SERVIDOR> <PORTA_SERVIDOR>", argv[0]);
         //printf("Exemplo: %s 192.168.10.1 8000", argv[0]);
-        //return 1;
-    }*/
+        return 1;
+    }
 
     char ip_servidor[255];
-    strcpy(ip_servidor, "192.168.25.198"); //argv[1];
-    int porta_servidor = 8000; //atoi(argv[2]);
-    int porta_aplicacao = 8001; //atoi(argv[3]);
+    strcpy(ip_servidor, argv[1]);
+    int porta_servidor = atoi(argv[2]);
+    int porta_aplicacao = atoi(argv[3]);
     Cliente* cliente = new Cliente(ip_servidor, porta_servidor, porta_aplicacao);
 
     printf("Conectar ao servidor...");

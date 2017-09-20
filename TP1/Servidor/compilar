@@ -1,1 +1,1 @@
-g++ Servidor/Servidor.cpp Servidor/Mensagem.cpp Servidor/main.cpp -o Servidor/servidor
+g++ Servidor.cpp Mensagem.cpp main.cpp -o servidor

@@ -57,22 +57,22 @@ int main(int argc, char** argv) {
         string str_argumentos = argumentos;
                 
         Cliente* cliente = new Cliente(8001);
-printf("\nConectar...");       
+        printf("\nConectar...");       
         cliente->conectar();
-printf("Ok\n");       
+        printf("Ok\n");       
 
         //--------------------------------------------
         //Enviar mensagem ao cliente solicitando grep distribuído - 0
-printf("\nEnviar...");       
+        printf("\nEnviar...");       
         cliente->enviar(new Mensagem(0, str_argumentos));
-printf("Ok\n");
+        printf("Ok\n");
  
-printf("\nReceber...");       
+        printf("\nReceber...");       
         //--------------------------------------------
         //Receber mensagem do cliente de resposta de solicitação ao grep distribuído - 5 [Resposta de 0]
         Mensagem* m = cliente->receber();
         // Exibe resultado de grep distribuído        
-printf("Ok\n");
+        printf("Ok\n");
 
         char msg[255]; 
         m->toChar(msg);///
