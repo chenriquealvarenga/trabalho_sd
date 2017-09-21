@@ -116,6 +116,22 @@ vector<Mensagem*> Servidor::receberTodos(){
     return *mensagens;
 }
 
+vector<Mensagem*> Servidor::enviarReceberTodos(Mensagem* mensagem){
+    vector<Mensagem*>* mensagens = new vector<Mensagem*>();
+    char str[50];
+    for(int i=0; i<MAX_CLIENTES; i++){
+        if(clientes[i] != -1){
+            enviar(i, mensagem);
+            Mensagem* m = receber(i);
+            sprintf(str, "----------\nMaquina %d\n----------\n", i);
+            m->setTexto(str + m->getTexto());
+            mensagens->push_back(m);
+        }
+    }
+    
+    return *mensagens;
+}
+
 // Recebe o índice de onde se encontra a conexão
 void Servidor::setConexao(int indice){
     this->conexao = clientes[indice];

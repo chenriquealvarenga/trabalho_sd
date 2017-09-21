@@ -53,6 +53,8 @@ public:
     void enviarTodos(Mensagem* mensagem);
     
     vector<Mensagem*> receberTodos();
+
+    vector<Mensagem*> enviarReceberTodos(Mensagem* mensagem);
     
     Mensagem* agruparMensagens(vector<Mensagem*> mensagens);
     
