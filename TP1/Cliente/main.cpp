@@ -167,6 +167,9 @@ int main(int argc, char** argv) {
                 printf("\nReceber...pid=%d ",getpid());
                 fflush(stdout);
                 m = cliente->receberDoServidor();
+                if(m->getCodigo()!=2){
+                    break;
+                }
                 m->toChar(msg); ///
                 printf("Mensagem: %s", msg);
                 fflush(stdout);

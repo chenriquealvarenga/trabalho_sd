@@ -85,6 +85,9 @@ int main(int argc, char** argv) {
                 printf("\nIndice cliente = %d",indice_cliente);
                 fflush(stdout);
                 Mensagem* m = servidor->receber(indice_cliente);
+                if(m->getCodigo()!=1){
+                    break;
+                }
                 char msg[255];
                 m->toChar(msg); ///
                 printf("Mensagem: %s", msg);
