@@ -99,9 +99,6 @@ int main(int argc, char** argv) {
                 printf("Ok\n");
                 fflush(stdout);
 
-                //TEM Q PARAR AQUI ATE O OUTRO PROCESSO RECEBER E ENVIAR
-                // if(conexaoGrep < 0)
-                //     return 0;
                 
                 //--------------------------------------------
                 //Receber mensagem do servidor solicitando grep local - 2
@@ -110,7 +107,6 @@ int main(int argc, char** argv) {
                 m = cliente->receberDoServidor();
                 m->toChar(msg); ///
                 printf("Mensagem: %s", msg);
-                printf("Ok hahahahaah\n");
                 fflush(stdout);
 
                 //--------------------------------------------
@@ -130,11 +126,10 @@ int main(int argc, char** argv) {
                 while (getline(arq, buffer)) {
                     result += buffer;
                 }
-                // string result = "blalala";
 
                 //--------------------------------------------
                 //Enviar mensagem de resposta da solicitação de grep local - 3 [Resposta de 2]
-                printf("\nEnviar...");
+                printf("\nEnviar...pid=%d ",getpid());
                 fflush(stdout);
                 m = new Mensagem(3, result.data());
                 cliente->enviarAoServidor(m);
@@ -145,17 +140,16 @@ int main(int argc, char** argv) {
 
                 //--------------------------------------------
                 //Receber mensagem do servidor com resposta de grep distribuído - 4 [Resposta de 1]
-                printf("\nReceber.ansdasbdhiasbdiabdhba");
+                printf("\nReceber...pid=%d ",getpid());
                 fflush(stdout);
                 m = cliente->receberDoServidor();
                 m->toChar(msg);
                 printf("Mensagem: %s", msg);
-                printf("Okkkkk\n");
                 fflush(stdout);
 
                 //--------------------------------------------
                 //Enviar mensagem à aplicação com resposta de grep distribuído - 5 [Resposta de 0]
-                printf("\nEnviar.");
+                printf("\nEnviar...pid=%d ",getpid());
                 fflush(stdout);
                 m->setCodigo(5);
                 m->toChar(msg); ///
@@ -181,7 +175,6 @@ int main(int argc, char** argv) {
                 m = cliente->receberDoServidor();
                 m->toChar(msg); ///
                 printf("Mensagem: %s", msg);
-                printf("Ok hahahahaah\n");
                 fflush(stdout);
 
                 //--------------------------------------------
@@ -205,7 +198,7 @@ int main(int argc, char** argv) {
 
                 //--------------------------------------------
                 //Enviar mensagem de resposta da solicitação de grep local - 3 [Resposta de 2]
-                printf("\nEnviar...");
+                printf("\nEnviar...pid=%d ",getpid());
                 fflush(stdout);
                 m = new Mensagem(3, result.data());
                 cliente->enviarAoServidor(m);
@@ -213,25 +206,6 @@ int main(int argc, char** argv) {
                 m->toChar(msg); ///
                 printf("Mensagem: %s", msg);
                 fflush(stdout);
-
-                // // //--------------------------------------------
-                // // //Receber mensagem do servidor com resposta de grep distribuído - 4 [Resposta de 1]
-                // // printf("\nReceber...");
-                // // fflush(stdout);
-                // // m = cliente->receberDoServidor();
-                // // printf("Ok\n");
-                // // fflush(stdout);
-
-                // // //--------------------------------------------
-                // // //Enviar mensagem à aplicação com resposta de grep distribuído - 5 [Resposta de 0]
-                // // printf("\nEnviar...");
-                // // fflush(stdout);
-                // // m->setCodigo(5);
-                // // cliente->enviarAoGrep(m);
-                // // printf("Ok\n");
-                // // fflush(stdout);
-
-                // // cliente->encerrarGrep();
 
             }
         
