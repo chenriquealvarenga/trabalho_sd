@@ -18,6 +18,7 @@
 #include "Mensagem.h"
 #include <fstream>
 #include <iostream>
+#include <signal.h>
 
 #define NOME_ARQUIVO "maquina.log"
 
@@ -57,8 +58,8 @@ int main(int argc, char** argv) {
     int conexaoGrep = -1;
     
     int parent_pid = getpid();
-
-    if (fork() < 0) {
+    int child_pid;
+    if ((child_pid = fork()) < 0) {
         perror("Ocorreu um erro criando nova instância no servidor - fork");
     }
 
@@ -69,6 +70,7 @@ int main(int argc, char** argv) {
                 printf("\nAceitar.");
                 fflush(stdout);
                 conexaoGrep = cliente->aceitarGrep();
+                kill(child_pid, SIGTERM);
                 printf("Ok - Cliente %d\n", conexaoGrep);
                 fflush(stdout);
 
@@ -162,6 +164,9 @@ int main(int argc, char** argv) {
                 printf("Ok\n");
                 fflush(stdout);
                 cliente->encerrarGrep();
+                if ((child_pid = fork()) < 0) {
+                    perror("Ocorreu um erro criando nova instância no servidor - fork");
+                }
             }
             else {
                 char msg[255];
