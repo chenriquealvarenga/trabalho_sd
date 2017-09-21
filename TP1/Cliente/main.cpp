@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
                 printf("\nAceitar.");
                 fflush(stdout);
                 conexaoGrep = cliente->aceitarGrep();
-                kill(child_pid, SIGTERM);
+                kill(child_pid, SIGKILL);
                 printf("Ok - Cliente %d\n", conexaoGrep);
                 fflush(stdout);
 
