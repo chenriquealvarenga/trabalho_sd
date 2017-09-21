@@ -47,16 +47,16 @@ int main(int argc, char** argv) {
     else*/{
         char argumentos[255];
         
-        sprintf(argumentos, "grep erro");
-        /*
+        sprintf(argumentos, "grep");
+        
         for(int i=1; i<argc; i++){
             sprintf(argumentos, "%s %s", argumentos, argv[i]);
         }
-        */
+        
         
         string str_argumentos = argumentos;
                 
-        Cliente* cliente = new Cliente(8003);
+        Cliente* cliente = new Cliente(8001);
         printf("\nConectar...");       
         cliente->conectar();
         printf("Ok\n");       

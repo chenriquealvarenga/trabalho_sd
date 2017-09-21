@@ -48,22 +48,12 @@ int main(int argc, char** argv) {
     int indice_cliente = -1;
     int parent_pid = getpid();
     while (true) {
-        printf("PARENT:%d",parent_pid);
 
-        // if ((filhoAceitaRecebe = fork()) < 0) {
-        //     perror("Ocorreu um erro ao definir se servidor deve aceitar conexão ou receber mensagem. - fork");
-        // } else {
-
-            // Aceita nova conexão
-            //if (filhoAceitaRecebe != 0) {
             if (getpid() == parent_pid){
                 printf("\nAguardando cliente...Pid=%d",getpid());
                 fflush(stdout);
 
                 indice_cliente = servidor->aceitarCliente();
-
-                // printf("Pressione qualquer tecla para continuar...");
-                // getchar();
 
                 if (indice_cliente >= 0) {
 
@@ -117,16 +107,18 @@ int main(int argc, char** argv) {
                 //Receber mensagem de resposta de solicitação de grep - 3 [Resposta de 2]                
                 printf("\nReceber");
                 fflush(stdout);
-                vector<Mensagem*> mensagens = servidor->receberTodos();
-                mensagens.at(0)->toChar(msg);
+                // vector<Mensagem*> mensagens = servidor->receberTodos();
+                // mensagens.at(0)->toChar(msg);
+                m = servidor->receber(indice_cliente);
                 printf("%s", msg);
                 printf("Ok\n");
                 fflush(stdout);
 
                 //--------------------------------------------
                 //Agrupa conteúdos das mensagens
-                m = servidor->agruparMensagens(mensagens);
-                m->toChar(msg); ///
+                // m = servidor->agruparMensagens(mensagens);
+                // m = mensagens.at(0);
+                m->toChar(msg);
                 printf("Mensagem: %s", msg);
 
                 //--------------------------------------------
@@ -135,8 +127,9 @@ int main(int argc, char** argv) {
                 fflush(stdout);
                 m->setCodigo(4);
                 servidor->enviar(indice_cliente, m);
-                printf("Ok\n");
+                printf("Ok fim\n");
                 fflush(stdout);
+                
             }
         // }
 
