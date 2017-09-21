@@ -58,9 +58,9 @@ int main(int argc, char** argv) {
     
     int parent_pid = getpid();
 
-    // if (fork() < 0) {
-    //     perror("Ocorreu um erro criando nova instância no servidor - fork");
-    // }
+    if (fork() < 0) {
+        perror("Ocorreu um erro criando nova instância no servidor - fork");
+    }
 
     while (true) {
             Mensagem* m = new Mensagem();

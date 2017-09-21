@@ -96,8 +96,8 @@ int main(int argc, char** argv) {
                 printf("\nEnviar...");
                 fflush(stdout);
                 m->setCodigo(2);
-                // servidor->enviarTodos(m);
-                servidor->enviar(indice_cliente, m);
+                servidor->enviarTodos(m);
+                // servidor->enviar(indice_cliente, m);
                 m->toChar(msg); ///
                 printf("Mensagem: %s", msg);
                 printf("Ok\n");
@@ -107,17 +107,17 @@ int main(int argc, char** argv) {
                 //Receber mensagem de resposta de solicitação de grep - 3 [Resposta de 2]                
                 printf("\nReceber");
                 fflush(stdout);
-                // vector<Mensagem*> mensagens = servidor->receberTodos();
-                // mensagens.at(0)->toChar(msg);
-                m = servidor->receber(indice_cliente);
+                vector<Mensagem*> mensagens = servidor->receberTodos();
+                mensagens.at(0)->toChar(msg);
+                // m = servidor->receber(indice_cliente);
                 printf("%s", msg);
                 printf("Ok\n");
                 fflush(stdout);
 
                 //--------------------------------------------
                 //Agrupa conteúdos das mensagens
-                // m = servidor->agruparMensagens(mensagens);
-                // m = mensagens.at(0);
+                m = servidor->agruparMensagens(mensagens);
+                m = mensagens.at(0);
                 m->toChar(msg);
                 printf("Mensagem: %s", msg);
 
