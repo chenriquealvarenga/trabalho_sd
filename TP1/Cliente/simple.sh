@@ -1,1 +1,0 @@
-echo "RESULTADO" > log.temp

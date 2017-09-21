@@ -111,18 +111,12 @@ int main(int argc, char** argv) {
 
                 //--------------------------------------------
                 //Executar grep local
-                // printf("1\n");
-                string comando = m->getTexto() + " " + NOME_ARQUIVO + " > log.temp";
-                // printf("2\n");
-                // system(comando.data());
-                system("./simple.sh");
-                // printf("3\n");
+                // string comando = m->getTexto() + " " + NOME_ARQUIVO + " > log.temp";
+                string comando = "cat maquina.log | grep erro > log.temp";
+                system(comando.data());
                 std::ifstream arq("log.temp");
-                // printf("4\n");
                 string buffer;
-                // printf("5\n");
                 string result;
-                // printf("6\n");
                 while (getline(arq, buffer)) {
                     result += buffer;
                 }
@@ -179,22 +173,17 @@ int main(int argc, char** argv) {
 
                 //--------------------------------------------
                 //Executar grep local
-                // printf("1\n");
-                string comando = m->getTexto() + " " + NOME_ARQUIVO + " > log.temp";
-                // printf("2\n");
-                // system(comando.data());
-                system("./simple.sh");
-                // printf("3\n");
+                printf("1\n");
+                // string comando = m->getTexto() + " " + NOME_ARQUIVO + " > log.temp";
+                string comando = "cat maquina.log | grep erro > log.temp";
+                printf("2\n");
+                system(comando.data());
                 std::ifstream arq("log.temp");
-                // printf("4\n");
                 string buffer;
-                // printf("5\n");
                 string result;
-                // printf("6\n");
                 while (getline(arq, buffer)) {
                     result += buffer;
                 }
-                // string result = "blalala";
 
                 //--------------------------------------------
                 //Enviar mensagem de resposta da solicitação de grep local - 3 [Resposta de 2]
