@@ -58,6 +58,10 @@ public:
     
     Mensagem* agruparMensagens(vector<Mensagem*> mensagens);
     
+    int getCliente(int i);
+    
+    void setCliente(int i, int cliente);
+    
 protected:
     // Insere cliente no array
     int insereCliente(int cliente);

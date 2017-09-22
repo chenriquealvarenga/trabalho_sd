@@ -13,15 +13,141 @@
 
 #include <cstdlib>
 #include <unistd.h>
+#include <pthread.h>
 
 #include "Servidor.h"
 
 using namespace std;
 
+void* thread_cliente(void* arg);
+
+void* thread_conexao(void* arg);
+
+pthread_t threads[MAX_CLIENTES];
+pthread_t thread_reinicia;
+
+Servidor* servidor = NULL;
+
+int cliente = -1;
+
+int qtd_clientes = 0;
+
+bool finalizado = false;
+
 /*
  * 
  */
 int main(int argc, char** argv) {
+
+    if (argc < 2) {
+        printf("Parâmetros insuficientes: entre com a porta do servidor.\n");
+        printf("%s <PORTA>\n", argv[0]);
+        printf("Exemplo: %s 8000\n", argv[0]);
+        //return 1;
+    }
+
+    int porta = atoi(argv[1]);
+
+    servidor = new Servidor(porta);
+
+    printf("Iniciando servidor na porta %d...", porta);
+    fflush(stdout);
+
+    servidor->iniciar();
+
+    printf("Ok\n");
+    fflush(stdout);
+
+    pthread_create(&(thread_reinicia), NULL, thread_conexao, NULL);
+                
+    while(true){
+        
+//        if(cliente == -1){
+        
+            printf("\nAguardando cliente...Pid=%d",getpid());
+            fflush(stdout);
+
+            int indice_cliente = servidor->aceitarCliente();
+
+            if(indice_cliente >= 0){
+                qtd_clientes++;
+                pthread_create(&(threads[indice_cliente]), NULL, thread_cliente, &indice_cliente);
+            }
+//        }
+    }
+    
+    return 0;
+}
+
+void* thread_conexao(void* arg){
+
+    int s;
+    
+    if(finalizado){
+        pthread_cancel(threads[cliente]); /////////////////////////////////////////////
+        for(int i=0; i<qtd_clientes; i++){
+            pthread_join(threads[i], NULL);
+        }
+        
+        printf("\nRecria threads");
+        fflush(stdout);
+        
+        for(int i=0; i<qtd_clientes; i++){
+            // if(cliente != i){
+                s = pthread_create(&(threads[i]), NULL, thread_cliente, &i);
+                if (s != 0)
+                   perror("pthread_create");
+            // }
+            
+            finalizado = false;
+
+        }
+    }
+}
+
+void* thread_cliente(void* arg){
+
+    int indice = *((int*) arg);
+    
+    void* res;
+    int s;
+    if(cliente == -1 || cliente == indice){
+
+        Mensagem* m = servidor->receber(indice);
+
+        if(m != NULL){
+            for(int i=0; i<qtd_clientes; i++){
+                if(indice != i){
+                    s = pthread_cancel(threads[i]);
+                    if (s != 0)
+                       perror("pthread_cancel");
+                }
+            }
+           
+            cliente = indice;
+            
+            printf("\nCliente %d fez requisição", indice);
+            fflush(stdout);
+
+            printf("\nBroadcast de requisição");
+            fflush(stdout);
+            m->setCodigo(2);
+            vector<Mensagem*> mensagens = servidor->enviarReceberTodos(m);
+            m = servidor->agruparMensagens(mensagens);
+
+            printf("\nResposta ao cliente %d", indice);
+            fflush(stdout);
+            m->setCodigo(4);
+            servidor->enviar(indice, m);
+           
+        }
+        
+        finalizado = true;
+    }
+}
+
+
+int _main(int argc, char** argv) {
 
     if (argc < 2) {
         printf("Parâmetros insuficientes: entre com a porta do servidor.\n");
@@ -47,6 +173,8 @@ int main(int argc, char** argv) {
 
     int indice_cliente = -1;
     int parent_pid = getpid();
+    
+    int fd[2];
     while (true) {
 
             if (getpid() == parent_pid){
@@ -59,14 +187,33 @@ int main(int argc, char** argv) {
 
                     printf("\nCliente conectado...Ok..indice=%d",indice_cliente);
                     fflush(stdout);
+                    
+                    pipe(fd);
 
                     if ((filhoNovaConexao = fork()) < 0) {
                         perror("Ocorreu um erro criando nova instância no servidor - fork");
                     } else {
                         // Processo filho
                         if (filhoNovaConexao == 0) {
-                            // servidor->encerrarServidor();
+                            close(fd[0]);
+                            servidor->encerrarServidor();
                             servidor->setConexao(indice_cliente);
+                            int dados[2];
+                            dados[0] = indice_cliente;
+                            dados[1] = servidor->getCliente(indice_cliente);
+                            write(fd[1], &dados, 2*sizeof(int));
+printf("\n\n\nDados: %d %d\n\n\n", dados[0], dados[1]);
+                        }
+                        else{
+                            close(fd[1]);
+                            int dados_recebidos[2];
+                            int bytes_recebidos = read(fd[0], &dados_recebidos, 2*sizeof(int));
+                            
+                            if(bytes_recebidos > 0){
+printf("\n\n\nSodad: %d %d\n\n\n", dados_recebidos[0], dados_recebidos[1]);
+
+                                servidor->setCliente(dados_recebidos[0], dados_recebidos[1]);
+                            }
                         }
                     }
                 } else {
@@ -96,15 +243,15 @@ int main(int argc, char** argv) {
 
                 //--------------------------------------------
                 //Enviar mensagem de solicitação de grep - 2                
-                // printf("\nEnviar...");
-                // fflush(stdout);
-                // m->setCodigo(2);
-                // servidor->enviarTodos(m);
-                // // servidor->enviar(indice_cliente, m);
-                // m->toChar(msg); ///
-                // printf("Mensagem: %s", msg);
-                // printf("Ok\n");
-                // fflush(stdout);
+                 /*printf("\nEnviar...");
+                 fflush(stdout);
+                 m->setCodigo(2);
+                 servidor->enviarTodos(m);
+                 // servidor->enviar(indice_cliente, m);
+                 m->toChar(msg); ///
+                 printf("Mensagem: %s", msg);
+                 printf("Ok\n");
+                 fflush(stdout);*/
 
                 //--------------------------------------------
                 //Receber mensagem de resposta de solicitação de grep - 3 [Resposta de 2]                

@@ -126,6 +126,7 @@ vector<Mensagem*> Servidor::enviarReceberTodos(Mensagem* mensagem){
             sprintf(str, "----------\nMaquina %d\n----------\n", i);
             m->setTexto(str + m->getTexto());
             mensagens->push_back(m);
+            
         }
     }
     
@@ -143,7 +144,18 @@ Mensagem* Servidor::agruparMensagens(vector<Mensagem*> mensagens){
     for(int i=0; i<mensagens.size(); i++){
         m->setTexto(m->getTexto() + "\n\n");
     }
+    return m;
 }
+
+int Servidor::getCliente(int i) {
+    return i >= 0 && i < MAX_CLIENTES ? clientes[i] : -1;
+}
+
+void Servidor::setCliente(int i, int cliente) {
+    if(i >= 0 && i < MAX_CLIENTES)
+        clientes[i] = cliente;
+}
+
 
 int Servidor::insereCliente(int cliente){
     int indice = proximoCliente();
